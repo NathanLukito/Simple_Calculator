@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
+import * as math from "mathjs"; 
 import './App.css';
+
 
 function Calculator() {
   const [input, setInput] = useState('');
   const [result, setResult] = useState('');
+  const [customVariables, setCustomVariables] = useState({}); 
+
 
   const handleInput = (e) => {
-    setInput(input + e.target.value);
+    setInput((prev) => prev + e.target.value);
   };
 
   const clearInput = () => {
@@ -15,9 +19,20 @@ function Calculator() {
   };
 
   const calculate = () => {
-    try {
-      setResult(eval(input));  // WARNING: eval() can be unsafe; in real apps, use a safer parsing method
-    } catch {
+    try{
+      const allVariables = { 
+        ...customVariables, 
+        pi: Math.PI, 
+        e: Math.E, 
+        sin: math.sin, 
+        cos: math.cos, 
+        tan: math.tan, 
+    };
+
+      const result = math.evaluate(input, allVariables)
+      setResult(result);
+    } 
+    catch {
       setResult('Error');
     }
   };
@@ -45,6 +60,10 @@ function Calculator() {
         <button onClick={handleInput} value="/">/</button>
         <button onClick={clearInput}>C</button>
         <button onClick={calculate}>=</button>
+        <button onClick={handleInput} value="sin">sin</button>
+        <button onClick={handleInput} value="cos">cos</button>
+        <button onClick={handleInput} value="tan">tan</button>
+        <button onClick={handleInput} value=")">)</button>
       </div>
     </div>
   );
